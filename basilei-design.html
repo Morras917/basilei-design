@@ -16,7 +16,6 @@
     --ink-soft: #4A3A2E;
     --gold: #B89968;
     --gold-deep: #8C6E40;
-    --rose: #C9778E;
     --line: rgba(42, 31, 24, 0.12);
     --line-strong: rgba(42, 31, 24, 0.25);
     --shadow: 0 30px 80px -20px rgba(42, 31, 24, 0.18);
@@ -225,7 +224,7 @@
     width: 100%;
     max-width: 480px;
     height: auto;
-    filter: drop-shadow(0 24px 32px rgba(42, 31, 24, 0.18));
+    filter: drop-shadow(0 12px 22px rgba(42, 31, 24, 0.10));
   }
 
   .stage-caption {
@@ -1123,7 +1122,7 @@
     const bandColor    = '#FAF6EE';
     const bandTextColor = '#4A3A2E';
     const logoMarkup   = state.logoData
-      ? `<image x="306" y="200" width="90" height="34" href="${state.logoData}" preserveAspectRatio="xMidYMid meet"/>`
+      ? `<image x="308" y="212" width="86" height="32" href="${state.logoData}" preserveAspectRatio="xMidYMid meet"/>`
       : '';
 
     svg.innerHTML = `
@@ -1208,22 +1207,19 @@
 
       <!-- BELLY BAND (Canvas route) or ATELIER branding -->
       ${showBand ? `
-        <polygon points="260,214 490,183 490,269 260,300" fill="${bandColor}" opacity="0.97"/>
-        <path d="M 268,222 L 482,192 L 482,261 L 268,291 Z"
+        <!-- Band ends at x=480, leaving a 10px right margin from the face edge -->
+        <polygon points="260,214 480,184 480,270 260,300" fill="${bandColor}" opacity="0.97"/>
+        <path d="M 268,222 L 472,192 L 472,262 L 268,292 Z"
               fill="none" stroke="${c.accent}" stroke-width="0.5" opacity="0.38"/>
         ${logoMarkup}
-        <text x="374" y="${state.logoData ? 236 : 244}" text-anchor="middle"
+        <text x="370" y="${state.logoData ? 249 : 244}" text-anchor="middle"
               font-family="${fontFamily}" font-weight="${fontWeight}" font-style="${fontStyle}"
               font-size="16" fill="${bandTextColor}"
-              letter-spacing="${state.typeStyle === 'sans' ? '2' : '0.5'}">
-          ${escapeXml(state.brandName.toUpperCase())}
-        </text>
-        <text x="374" y="${state.logoData ? 253 : 260}" text-anchor="middle"
+              letter-spacing="${state.typeStyle === 'sans' ? '2' : '0.5'}">${escapeXml(state.brandName.toUpperCase())}</text>
+        <text x="370" y="${state.logoData ? 265 : 260}" text-anchor="middle"
               font-family="'Outfit',sans-serif" font-weight="300" font-size="6"
-              fill="${bandTextColor}" opacity="0.65" letter-spacing="1.8">
-          — ${escapeXml(state.tagline.toUpperCase())} —
-        </text>
-        <line x1="322" y1="270" x2="426" y2="263"
+              fill="${bandTextColor}" opacity="0.65" letter-spacing="1.8">— ${escapeXml(state.tagline.toUpperCase())} —</text>
+        <line x1="318" y1="272" x2="422" y2="265"
               stroke="${c.accent}" stroke-width="0.4" opacity="0.38"/>
       ` : `
         <!-- Atelier: brand directly on box face -->
@@ -1231,14 +1227,10 @@
         <text x="374" y="${state.logoData ? 260 : 252}" text-anchor="middle"
               font-family="${fontFamily}" font-weight="${fontWeight}" font-style="${fontStyle}"
               font-size="18" fill="${c.accent}"
-              letter-spacing="${state.typeStyle === 'sans' ? '3' : '1'}">
-          ${escapeXml(state.brandName.toUpperCase())}
-        </text>
+              letter-spacing="${state.typeStyle === 'sans' ? '3' : '1'}">${escapeXml(state.brandName.toUpperCase())}</text>
         <text x="374" y="${state.logoData ? 278 : 270}" text-anchor="middle"
               font-family="'Outfit',sans-serif" font-weight="300" font-size="6.5"
-              fill="${c.accent}" opacity="0.72" letter-spacing="2">
-          — ${escapeXml(state.tagline.toUpperCase())} —
-        </text>
+              fill="${c.accent}" opacity="0.72" letter-spacing="2">— ${escapeXml(state.tagline.toUpperCase())} —</text>
       `}
     `;
   }
@@ -1359,8 +1351,8 @@
       });
     });
     document.getElementById('qtyInput').addEventListener('input', e => {
-      const n = parseInt(e.target.value) || 0;
-      state.quantity = n;
+      const raw = parseInt(e.target.value);
+      state.quantity = isNaN(raw) ? 0 : Math.max(0, raw); // clamp to non-negative; min-12 enforced at submit
       document.querySelectorAll('.qty-tier').forEach(t => t.classList.remove('active'));
       renderSummary();
     });
