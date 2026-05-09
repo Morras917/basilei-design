@@ -1,0 +1,22 @@
+{
+  "name": "basilei-design",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Basilei Design Tool — bespoke box configurator",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "roots": ["<rootDir>/src"],
+    "testMatch": ["<rootDir>/src/**/*.test.js"],
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": ["src/**/*.js", "!src/**/*.test.js"],
+    "watchPathIgnorePatterns": ["node_modules"]
+  }
+}

@@ -6,6 +6,7 @@
 !.gitignore
 
 # Project files
+!index.html
 !basilei-design.html
 !package.json
 !package-lock.json
