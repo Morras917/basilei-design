@@ -1108,7 +1108,6 @@
     const svg = document.getElementById('boxPreview');
     const c = state.color;
 
-    // Lighten/darken helpers for face shading
     const shade = (hex, amt) => {
       const n = parseInt(hex.slice(1), 16);
       const r = Math.max(0, Math.min(255, ((n >> 16) & 255) + amt));
@@ -1117,129 +1116,133 @@
       return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
     };
 
-    const top = shade(c.fill, 20);
-    const front = c.fill;
-    const side = shade(c.fill, -28);
-
-    const fontFamily = state.typeStyle === 'sans'
-      ? "'Outfit', sans-serif"
-      : "'Fraunces', serif";
-    const fontStyle = state.typeStyle === 'italic' ? 'italic' : 'normal';
-    const fontWeight = state.typeStyle === 'sans' ? 500 : 400;
-
-    // Belly band visibility (only for "canvas" route)
-    const showBand = state.route === 'canvas';
-    const bandColor = '#FAF6EE';
+    const fontFamily   = state.typeStyle === 'sans' ? "'Outfit', sans-serif" : "'Fraunces', serif";
+    const fontStyle    = state.typeStyle === 'italic' ? 'italic' : 'normal';
+    const fontWeight   = state.typeStyle === 'sans' ? 500 : 400;
+    const showBand     = state.route === 'canvas';
+    const bandColor    = '#FAF6EE';
     const bandTextColor = '#4A3A2E';
-
-    // Logo embedded
-    const logoMarkup = state.logoData
-      ? `<image x="240" y="155" width="120" height="50" href="${state.logoData}" preserveAspectRatio="xMidYMid meet"/>`
+    const logoMarkup   = state.logoData
+      ? `<image x="306" y="200" width="90" height="34" href="${state.logoData}" preserveAspectRatio="xMidYMid meet"/>`
       : '';
 
     svg.innerHTML = `
       <defs>
-        <clipPath id="windowClip">
-          <rect x="380" y="180" width="80" height="44" rx="2"/>
-        </clipPath>
+        <!-- Face gradients: light source from upper-left -->
+        <linearGradient id="gTop" x1="150" y1="105" x2="490" y2="180" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="${shade(c.fill, 54)}"/>
+          <stop offset="100%" stop-color="${shade(c.fill, 18)}"/>
+        </linearGradient>
+        <linearGradient id="gFront" x1="360" y1="180" x2="360" y2="350" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="${shade(c.fill, 10)}"/>
+          <stop offset="100%" stop-color="${shade(c.fill, -14)}"/>
+        </linearGradient>
+        <linearGradient id="gSide" x1="150" y1="245" x2="230" y2="265" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="${shade(c.fill, -44)}"/>
+          <stop offset="100%" stop-color="${shade(c.fill, -24)}"/>
+        </linearGradient>
+        <radialGradient id="gShadow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#2A1F18" stop-opacity="0.22"/>
+          <stop offset="100%" stop-color="#2A1F18" stop-opacity="0"/>
+        </radialGradient>
       </defs>
 
-      <!-- TOP FACE (parallelogram) -->
-      <polygon points="80,140 480,100 560,140 160,180" fill="${top}" stroke="${c.accent}" stroke-width="0.5" stroke-opacity="0.3"/>
+      <!-- FLOOR SHADOW -->
+      <ellipse cx="330" cy="376" rx="182" ry="10" fill="url(#gShadow)"/>
 
-      <!-- TOP: BASILEI text -->
-      <text x="320" y="148" text-anchor="middle"
-            font-family="'Fraunces', serif" font-weight="500" font-size="22"
-            fill="${c.accent}" letter-spacing="6"
-            transform="rotate(-6 320 148)">BASILEI</text>
-      <text x="320" y="165" text-anchor="middle"
-            font-family="'Outfit', sans-serif" font-weight="400" font-size="7"
-            fill="${c.accent}" letter-spacing="3" opacity="0.75"
-            transform="rotate(-6 320 165)">— HANDCRAFTED CONFECTIONERY —</text>
+      <!-- SIDE FACE (narrow left) -->
+      <polygon points="150,140 230,180 230,350 150,310" fill="url(#gSide)"/>
 
-      <!-- FRONT FACE -->
-      <polygon points="80,140 160,180 160,340 80,300" fill="${side}"/>
+      <!-- Flavour sticker on side face -->
+      <rect x="155" y="182" width="62" height="50" rx="1"
+            fill="#FAF6EE" stroke="${c.accent}" stroke-width="0.5"/>
+      <text x="186" y="197" text-anchor="middle" font-family="'Outfit',sans-serif"
+            font-size="5.5" font-weight="500" fill="${c.accent}" letter-spacing="0.3">${flavourLines(state.flavour)[0]}</text>
+      <text x="186" y="207" text-anchor="middle" font-family="'Outfit',sans-serif"
+            font-size="5.5" font-weight="500" fill="${c.accent}" letter-spacing="0.3">${flavourLines(state.flavour)[1] || ''}</text>
+      <text x="186" y="217" text-anchor="middle" font-family="'Outfit',sans-serif"
+            font-size="5.5" font-weight="500" fill="${c.accent}" letter-spacing="0.3">${flavourLines(state.flavour)[2] || ''}</text>
 
-      <!-- FRONT face content (side panel with monogram + flavour label) -->
-      <g>
-        <!-- Flavour sticker -->
-        <rect x="92" y="158" width="58" height="40" fill="#FAF6EE" stroke="${c.accent}" stroke-width="0.4"/>
-        <text x="121" y="172" text-anchor="middle" font-family="'Outfit', sans-serif" font-size="5" font-weight="500" fill="${c.accent}" letter-spacing="0.5">${flavourLines(state.flavour)[0]}</text>
-        <text x="121" y="180" text-anchor="middle" font-family="'Outfit', sans-serif" font-size="5" font-weight="500" fill="${c.accent}" letter-spacing="0.5">${flavourLines(state.flavour)[1] || ''}</text>
-        <text x="121" y="188" text-anchor="middle" font-family="'Outfit', sans-serif" font-size="5" font-weight="500" fill="${c.accent}" letter-spacing="0.5">${flavourLines(state.flavour)[2] || ''}</text>
+      <!-- FRONT FACE (main face with branding) -->
+      <polygon points="230,180 490,145 490,315 230,350" fill="url(#gFront)"/>
+
+      <!-- Ornamental double frame -->
+      <path d="M 248,198 L 472,165 L 472,298 L 248,330 Z"
+            fill="none" stroke="${c.accent}" stroke-width="0.8" opacity="0.5"/>
+      <path d="M 255,205 L 465,173 L 465,291 L 255,322 Z"
+            fill="none" stroke="${c.accent}" stroke-width="0.35" opacity="0.3"/>
+      <g stroke="${c.accent}" stroke-width="0.6" fill="none" opacity="0.55">
+        <path d="M 256,205 q 6,-3 11,5"/>   <path d="M 459,174 q -6,2 -11,-4"/>
+        <path d="M 256,315 q 6,3 11,-4"/>   <path d="M 459,284 q -6,-2 -11,4"/>
       </g>
 
-      <!-- LONG FRONT FACE -->
-      <polygon points="160,180 560,140 560,300 160,340" fill="${front}"/>
-
-      <!-- Gold ornamental frame on front face -->
-      <path d="M 180,200 L 540,164 L 540,290 L 180,322 Z"
-            fill="none" stroke="${c.accent}" stroke-width="0.8" opacity="0.55"/>
-      <path d="M 188,206 L 532,172 L 532,282 L 188,314 Z"
-            fill="none" stroke="${c.accent}" stroke-width="0.4" opacity="0.4"/>
-      <!-- Decorative corner notches -->
-      ${cornerOrnaments(c.accent)}
-
-      <!-- B monogram circle (left side of front) -->
-      <g transform="translate(206, 268)">
-        <circle r="14" fill="none" stroke="${c.accent}" stroke-width="0.5" opacity="0.6"/>
-        <circle r="11" fill="none" stroke="${c.accent}" stroke-width="0.3" opacity="0.4"/>
-        <text x="0" y="4" text-anchor="middle" font-family="'Fraunces', serif" font-weight="500" font-style="italic" font-size="14" fill="${c.accent}" opacity="0.8">B</text>
+      <!-- B monogram (lower-left of front face) -->
+      <g transform="translate(272,295)">
+        <circle r="16" fill="none" stroke="${c.accent}" stroke-width="0.5" opacity="0.5"/>
+        <circle r="12" fill="none" stroke="${c.accent}" stroke-width="0.28" opacity="0.32"/>
+        <text x="0" y="5" text-anchor="middle" font-family="'Fraunces',serif"
+              font-weight="500" font-style="italic" font-size="14"
+              fill="${c.accent}" opacity="0.72">B</text>
       </g>
 
-      <!-- BELLY BAND (Canvas route only) -->
+      <!-- TOP FACE — drawn after front/side; shares edges, no area overlap -->
+      <polygon points="230,180 490,145 410,105 150,140" fill="url(#gTop)"/>
+      <polygon points="230,180 490,145 410,105 150,140"
+               fill="none" stroke="${c.accent}" stroke-width="0.5" stroke-opacity="0.22"/>
+
+      <!-- BASILEI text on top -->
+      <text x="330" y="154" text-anchor="middle"
+            font-family="'Fraunces',serif" font-weight="600" font-size="15"
+            fill="${c.accent}" letter-spacing="5" opacity="0.9"
+            transform="rotate(-6.5 330 154)">BASILEI</text>
+      <text x="330" y="166" text-anchor="middle"
+            font-family="'Outfit',sans-serif" font-weight="400" font-size="5.5"
+            fill="${c.accent}" letter-spacing="2.5" opacity="0.65"
+            transform="rotate(-6.5 330 166)">— HANDCRAFTED CONFECTIONERY —</text>
+
+      <!-- LID RIM: gold accent line along top of front face -->
+      <line x1="230" y1="180" x2="490" y2="145"
+            stroke="${c.accent}" stroke-width="2" opacity="0.72"/>
+      <line x1="150" y1="140" x2="230" y2="180"
+            stroke="${c.accent}" stroke-width="1.1" opacity="0.42"/>
+
+      <!-- BELLY BAND (Canvas route) or ATELIER branding -->
       ${showBand ? `
-        <polygon points="240,170 480,148 480,310 240,332" fill="${bandColor}" opacity="0.97"/>
-
-        <!-- Logo if uploaded -->
+        <polygon points="260,214 490,183 490,269 260,300" fill="${bandColor}" opacity="0.97"/>
+        <path d="M 268,222 L 482,192 L 482,261 L 268,291 Z"
+              fill="none" stroke="${c.accent}" stroke-width="0.5" opacity="0.38"/>
         ${logoMarkup}
-
-        <!-- Brand name -->
-        <text x="360" y="${state.logoData ? 230 : 235}" text-anchor="middle"
+        <text x="374" y="${state.logoData ? 236 : 244}" text-anchor="middle"
               font-family="${fontFamily}" font-weight="${fontWeight}" font-style="${fontStyle}"
-              font-size="18" fill="${bandTextColor}" letter-spacing="${state.typeStyle === 'sans' ? '2' : '1'}">
+              font-size="16" fill="${bandTextColor}"
+              letter-spacing="${state.typeStyle === 'sans' ? '2' : '0.5'}">
           ${escapeXml(state.brandName.toUpperCase())}
         </text>
-
-        <!-- Tagline -->
-        <text x="360" y="${state.logoData ? 248 : 254}" text-anchor="middle"
-              font-family="'Outfit', sans-serif" font-weight="300" font-size="7"
-              fill="${bandTextColor}" opacity="0.7" letter-spacing="2">
+        <text x="374" y="${state.logoData ? 253 : 260}" text-anchor="middle"
+              font-family="'Outfit',sans-serif" font-weight="300" font-size="6"
+              fill="${bandTextColor}" opacity="0.65" letter-spacing="1.8">
           — ${escapeXml(state.tagline.toUpperCase())} —
         </text>
-
-        <!-- Decorative line -->
-        <line x1="320" y1="265" x2="400" y2="259" stroke="${c.accent}" stroke-width="0.4" opacity="0.5"/>
+        <line x1="322" y1="270" x2="426" y2="263"
+              stroke="${c.accent}" stroke-width="0.4" opacity="0.38"/>
       ` : `
-        <!-- Atelier route: full custom branding on the box itself -->
-        <text x="360" y="${state.logoData ? 250 : 245}" text-anchor="middle"
+        <!-- Atelier: brand directly on box face -->
+        ${logoMarkup}
+        <text x="374" y="${state.logoData ? 260 : 252}" text-anchor="middle"
               font-family="${fontFamily}" font-weight="${fontWeight}" font-style="${fontStyle}"
-              font-size="20" fill="${c.accent}" letter-spacing="${state.typeStyle === 'sans' ? '3' : '1.5'}">
+              font-size="18" fill="${c.accent}"
+              letter-spacing="${state.typeStyle === 'sans' ? '3' : '1'}">
           ${escapeXml(state.brandName.toUpperCase())}
         </text>
-        <text x="360" y="${state.logoData ? 268 : 263}" text-anchor="middle"
-              font-family="'Outfit', sans-serif" font-weight="300" font-size="7"
-              fill="${c.accent}" opacity="0.75" letter-spacing="2">
+        <text x="374" y="${state.logoData ? 278 : 270}" text-anchor="middle"
+              font-family="'Outfit',sans-serif" font-weight="300" font-size="6.5"
+              fill="${c.accent}" opacity="0.72" letter-spacing="2">
           — ${escapeXml(state.tagline.toUpperCase())} —
         </text>
-        ${logoMarkup}
       `}
-
-      <!-- Subtle floor shadow -->
-      <ellipse cx="320" cy="365" rx="200" ry="8" fill="#2A1F18" opacity="0.06"/>
     `;
   }
 
-  function cornerOrnaments(color) {
-    return `
-      <g stroke="${color}" stroke-width="0.5" fill="none" opacity="0.65">
-        <path d="M 195,210 q 5,-2 10,4"/>
-        <path d="M 525,170 q -5,2 -10,-4"/>
-        <path d="M 195,310 q 5,2 10,-4"/>
-        <path d="M 525,280 q -5,-2 -10,4"/>
-      </g>
-    `;
-  }
 
   function flavourLines(flavour) {
     return flavour.toUpperCase().replace(/&/g, '&amp;').split(/\s+/).reduce((acc, w) => {
