@@ -1066,7 +1066,7 @@
       <h2 class="serif">A bespoke Basilei.</h2>
       <div class="summary-rows" id="summaryRows"></div>
       <div class="summary-actions">
-        <button class="btn">Save design</button>
+        <button class="btn" id="downloadPdfBtn">Download PDF ↓</button>
         <button class="btn btn-primary">Request quote →</button>
       </div>
     </div>
@@ -1370,10 +1370,8 @@
       svg.style.transition = 'transform 0.5s ease';
     });
 
-    // Download stub
-    document.getElementById('downloadBtn').addEventListener('click', () => {
-      alert('In production this would export your design as a high-res PDF for proofing.');
-    });
+    // Download PDF (stage ↓ shortcut button)
+    document.getElementById('downloadBtn').addEventListener('click', downloadPdf);
   }
 
   // ═══════════════════════════════════════
@@ -1585,6 +1583,125 @@
       document.getElementById('qtyError').textContent = '';
     }
   });
+
+  // ═══════════════════════════════════════
+  //  PDF DOWNLOAD
+  // ═══════════════════════════════════════
+  function buildPrintHtml() {
+    const svgContent = document.getElementById('boxPreview').outerHTML;
+    const dateStr = new Date().toLocaleDateString('en-ZA', {
+      day: 'numeric', month: 'long', year: 'numeric',
+    });
+    const rows = [
+      ['Route',     ROUTE_LABELS[state.route]],
+      ['Colourway', null],           // rendered separately with colour chip
+      ['Branding',  state.brandName],
+      ['Tagline',   state.tagline],
+      ['Flavour',   state.flavour],
+      ['Quantity',  state.quantity + ' boxes'],
+      ['Lead time', '14 working days from artwork sign-off'],
+    ];
+    const tableRows = rows.map(([k, v]) => {
+      if (k === 'Colourway') {
+        return `<tr>
+          <td class="lbl">${escapeXml(k)}</td>
+          <td class="val"><span class="chip" style="background:${state.color.fill}"></span>${escapeXml(state.color.name)}</td>
+        </tr>`;
+      }
+      return `<tr><td class="lbl">${escapeXml(k)}</td><td class="val">${escapeXml(String(v))}</td></tr>`;
+    }).join('');
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Basilei — ${escapeXml(state.brandName)} Design Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+@page { size: A4; margin: 28pt 40pt; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Outfit', sans-serif; color: #2A1F18; background: #FAF6EE;
+       -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.sheet { width: 100%; min-height: 100vh; display: flex; flex-direction: column; }
+.hd { text-align: center; padding-bottom: 20pt; border-bottom: 0.5pt solid #B89968; margin-bottom: 28pt; }
+.hd-wordmark { font-family: 'Fraunces', serif; font-weight: 600; font-size: 26pt;
+               letter-spacing: 0.22em; margin-bottom: 6pt; }
+.hd-sub { font-size: 7.5pt; letter-spacing: 0.3em; text-transform: uppercase; color: #8C6E40; }
+.body { display: grid; grid-template-columns: 1.3fr 1fr; gap: 40pt; flex: 1;
+        align-items: start; margin-bottom: 28pt; }
+.preview svg { width: 100%; height: auto;
+               filter: drop-shadow(0 6pt 14pt rgba(42,31,24,0.14)); }
+.preview-cap { text-align: center; margin-top: 10pt; font-family: 'Fraunces', serif;
+               font-style: italic; font-size: 8.5pt; color: #4A3A2E; }
+.dh { font-family: 'Fraunces', serif; font-weight: 400; font-size: 15pt;
+      letter-spacing: -0.01em; margin-bottom: 14pt; padding-bottom: 10pt;
+      border-bottom: 0.5pt solid rgba(42,31,24,0.18); }
+table { width: 100%; border-collapse: collapse; }
+tr    { border-bottom: 0.5pt solid rgba(42,31,24,0.1); }
+tr:last-child { border: none; }
+td    { padding: 8pt 0; font-size: 8.5pt; vertical-align: middle; }
+.lbl  { text-transform: uppercase; letter-spacing: 0.1em; color: #4A3A2E; width: 36%; }
+.val  { font-weight: 500; text-align: right; }
+.chip { display: inline-block; width: 9pt; height: 9pt; border-radius: 50%;
+        border: 0.5pt solid rgba(42,31,24,0.2); vertical-align: middle; margin-right: 4pt; }
+.ft { border-top: 0.5pt solid #B89968; padding-top: 14pt; margin-top: auto;
+      display: flex; justify-content: space-between; align-items: flex-end; }
+.ft-l { font-size: 7.5pt; color: #4A3A2E; line-height: 1.8; }
+.ft-r { font-family: 'Fraunces', serif; font-style: italic; font-size: 9pt;
+        color: #8C6E40; text-align: right; }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <header class="hd">
+    <div class="hd-wordmark">BASILEI</div>
+    <div class="hd-sub">Bespoke Design Brief</div>
+  </header>
+  <div class="body">
+    <div class="preview">
+      ${svgContent}
+      <div class="preview-cap">— handcrafted confectionery since 2016 —</div>
+    </div>
+    <div class="details">
+      <div class="dh">Your Design</div>
+      <table>${tableRows}</table>
+    </div>
+  </div>
+  <footer class="ft">
+    <div class="ft-l">
+      basilei.co.za &nbsp;&middot;&nbsp; studio@basilei.co.za<br>
+      Stellenbosch, South Africa<br>
+      Generated: ${escapeXml(dateStr)}
+    </div>
+    <div class="ft-r">— Handcrafted<br>Confectionery —</div>
+  </footer>
+</div>
+<script>
+  (document.fonts && document.fonts.ready
+    ? document.fonts.ready
+    : new Promise(function(r) { setTimeout(r, 800); })
+  ).then(function() {
+    window.print();
+    setTimeout(function() { window.close(); }, 1200);
+  });
+<\/script>
+</body>
+</html>`;
+  }
+
+  function downloadPdf() {
+    const win = window.open('', '_blank', 'width=820,height=1160');
+    if (!win) {
+      alert('Please allow pop-ups for this page to download your design as a PDF.');
+      return;
+    }
+    win.document.write(buildPrintHtml());
+    win.document.close();
+  }
+
+  document.getElementById('downloadPdfBtn').addEventListener('click', downloadPdf);
 </script>
 
 <!-- QUOTE MODAL -->
