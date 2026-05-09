@@ -1,0 +1,19 @@
+# Ignore everything in the home directory by default;
+# only the Basilei project files below are tracked.
+*
+
+# Repository meta
+!.gitignore
+
+# Project files
+!basilei-design.html
+!package.json
+!package-lock.json
+
+# Source / tests
+!src/
+!src/*
+
+# Build artefacts
+node_modules/
+coverage/
