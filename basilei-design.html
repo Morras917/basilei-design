@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Your Own — Basilei</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5EFE6;
+    --cream-deep: #ECE3D2;
+    --bone: #FAF6EE;
+    --ink: #2A1F18;
+    --ink-soft: #4A3A2E;
+    --gold: #B89968;
+    --gold-deep: #8C6E40;
+    --rose: #C9778E;
+    --line: rgba(42, 31, 24, 0.12);
+    --line-strong: rgba(42, 31, 24, 0.25);
+    --shadow: 0 30px 80px -20px rgba(42, 31, 24, 0.18);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bone);
+    color: var(--ink);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .serif { font-family: 'Fraunces', serif; }
+
+  /* ═══════════ HEADER ═══════════ */
+  header {
+    border-bottom: 0.5px solid var(--line);
+    padding: 18px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bone);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .brand {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: 0.18em;
+    color: var(--ink);
+  }
+  nav {
+    display: flex;
+    gap: 32px;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  nav a { color: inherit; text-decoration: none; }
+  nav a.active { color: var(--ink); border-bottom: 1px solid var(--gold); padding-bottom: 4px; }
+
+  /* ═══════════ HERO ═══════════ */
+  .hero {
+    padding: 64px 48px 32px;
+    max-width: 1320px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--gold-deep);
+    margin-bottom: 20px;
+  }
+  .eyebrow::before, .eyebrow::after {
+    content: "—";
+    margin: 0 12px;
+    color: var(--gold);
+  }
+  h1.title {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(40px, 5vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 18px;
+  }
+  h1.title em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--gold-deep);
+  }
+  .lede {
+    max-width: 580px;
+    margin: 0 auto;
+    font-size: 16px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  /* ═══════════ ROUTE PICKER ═══════════ */
+  .routes {
+    max-width: 1100px;
+    margin: 48px auto 0;
+    padding: 0 48px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .route-card {
+    background: var(--bone);
+    border: 0.5px solid var(--line-strong);
+    padding: 28px 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    position: relative;
+  }
+  .route-card:hover {
+    background: var(--cream);
+    border-color: var(--gold);
+  }
+  .route-card.active {
+    background: var(--cream);
+    border-color: var(--gold);
+    box-shadow: inset 0 0 0 1px var(--gold);
+  }
+  .route-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 36px;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .route-card h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 19px;
+    margin-bottom: 8px;
+    letter-spacing: -0.005em;
+  }
+  .route-card p {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+
+  /* ═══════════ MAIN STUDIO ═══════════ */
+  .studio {
+    max-width: 1320px;
+    margin: 56px auto 0;
+    padding: 0 48px 80px;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 56px;
+    align-items: start;
+  }
+
+  /* PREVIEW SIDE */
+  .stage {
+    position: sticky;
+    top: 90px;
+    background: var(--cream);
+    border-radius: 4px;
+    padding: 56px 32px;
+    min-height: 520px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .stage::before {
+    content: "";
+    position: absolute;
+    inset: 16px;
+    border: 0.5px solid var(--gold);
+    pointer-events: none;
+  }
+  .stage-label {
+    position: absolute;
+    top: 28px;
+    left: 32px;
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--gold-deep);
+    z-index: 2;
+  }
+  .stage-actions {
+    position: absolute;
+    top: 28px;
+    right: 32px;
+    display: flex;
+    gap: 8px;
+    z-index: 2;
+  }
+  .icon-btn {
+    background: rgba(255,255,255,0.6);
+    border: 0.5px solid var(--line-strong);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  .icon-btn:hover { background: white; }
+
+  #boxPreview {
+    width: 100%;
+    max-width: 480px;
+    height: auto;
+    filter: drop-shadow(0 24px 32px rgba(42, 31, 24, 0.18));
+  }
+
+  .stage-caption {
+    margin-top: 32px;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-soft);
+    text-align: center;
+    z-index: 2;
+  }
+
+  /* CONTROLS SIDE */
+  .controls { padding-top: 4px; }
+
+  .step {
+    border-bottom: 0.5px solid var(--line);
+    padding: 0 0 32px;
+    margin-bottom: 32px;
+  }
+  .step:last-of-type { border-bottom: none; }
+
+  .step-header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .step-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 28px;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .step-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+  }
+  .step-hint {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+    line-height: 1.55;
+  }
+
+  /* COLOR SWATCHES */
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .swatch {
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.2s;
+  }
+  .swatch:hover { transform: translateY(-2px); }
+  .swatch-color {
+    aspect-ratio: 1 / 1.2;
+    border: 0.5px solid var(--line-strong);
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .swatch.active .swatch-color {
+    box-shadow: 0 0 0 1px var(--bone), 0 0 0 2px var(--gold);
+  }
+  .swatch-color::after {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 0.5px solid rgba(184, 153, 104, 0.5);
+  }
+  .swatch.active .swatch-color::before {
+    content: "✓";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold-deep);
+    font-size: 18px;
+    font-weight: 600;
+    z-index: 2;
+  }
+  .swatch-name {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+  }
+
+  /* TEXT INPUTS */
+  .field { margin-bottom: 16px; }
+  .field-label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+  .field input[type="text"], .field select {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 0.5px solid var(--line-strong);
+    padding: 10px 0;
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+    transition: border-color 0.2s;
+  }
+  .field input[type="text"]:focus, .field select:focus {
+    outline: none;
+    border-bottom-color: var(--gold);
+  }
+  .field select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3e%3cpath d='M1 1l5 5 5-5' stroke='%238C6E40' fill='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    cursor: pointer;
+  }
+
+  /* UPLOAD */
+  .upload {
+    border: 1px dashed var(--line-strong);
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(245, 239, 230, 0.4);
+  }
+  .upload:hover { border-color: var(--gold); background: var(--cream); }
+  .upload-icon {
+    font-size: 24px;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .upload-text {
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .upload-text strong { color: var(--ink); font-weight: 500; }
+  .upload input { display: none; }
+
+  /* TYPE STYLE PICKER */
+  .type-styles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .type-style {
+    padding: 14px 10px;
+    border: 0.5px solid var(--line-strong);
+    background: var(--bone);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .type-style:hover { border-color: var(--gold); }
+  .type-style.active { border-color: var(--gold); background: var(--cream); }
+  .type-style-name {
+    font-size: 18px;
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+  }
+  .type-style-label {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  /* QUANTITY */
+  .qty-tiers {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .qty-tier {
+    padding: 12px 6px;
+    border: 0.5px solid var(--line-strong);
+    background: var(--bone);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .qty-tier:hover { border-color: var(--gold); }
+  .qty-tier.active { border-color: var(--gold); background: var(--cream); }
+  .qty-tier-num {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .qty-tier-label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .qty-tier.active .qty-tier-label { color: var(--gold-deep); }
+
+  /* ═══════════ SUMMARY / CTA ═══════════ */
+  .summary {
+    background: var(--ink);
+    color: var(--bone);
+    padding: 48px 32px;
+    margin-top: 24px;
+    position: relative;
+  }
+  .summary::before {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border: 0.5px solid var(--gold);
+    pointer-events: none;
+  }
+  .summary-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .summary h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: 32px;
+    margin-bottom: 24px;
+    letter-spacing: -0.01em;
+  }
+  .summary-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 12px;
+    border-bottom: 0.5px solid rgba(245, 239, 230, 0.2);
+    font-size: 14px;
+  }
+  .summary-row:last-child { border: none; }
+  .summary-row span:first-child {
+    color: rgba(245, 239, 230, 0.65);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 11px;
+  }
+  .summary-row span:last-child { font-weight: 500; }
+  .summary-actions {
+    display: flex;
+    gap: 12px;
+  }
+  .btn {
+    flex: 1;
+    padding: 16px 20px;
+    background: transparent;
+    border: 0.5px solid var(--gold);
+    color: var(--bone);
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn:hover { background: var(--gold); color: var(--ink); }
+  .btn-primary { background: var(--gold); color: var(--ink); }
+  .btn-primary:hover { background: var(--cream); }
+
+  /* ═══════════ HAMBURGER BUTTON ═══════════ */
+  .nav-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    position: relative;
+    z-index: 100;
+  }
+  .nav-toggle span {
+    display: block;
+    width: 22px;
+    height: 1.5px;
+    background: var(--ink);
+    transition: transform 0.35s ease, opacity 0.25s ease;
+    transform-origin: center;
+  }
+  .nav-toggle.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .nav-toggle.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  /* ═══════════ MOBILE NAV OVERLAY ═══════════ */
+  .mobile-nav {
+    position: fixed;
+    inset: 0;
+    background: var(--bone);
+    z-index: 45;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(-100%);
+    transition: transform 0.48s cubic-bezier(0.77, 0, 0.175, 1);
+  }
+  .mobile-nav.open { transform: translateY(0); }
+  .mobile-nav-wordmark {
+    position: absolute;
+    top: 20px;
+    left: 24px;
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--ink);
+  }
+  .mobile-nav-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+    padding: 0 40px;
+  }
+  .mobile-nav-inner a {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(26px, 7vw, 38px);
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    text-decoration: none;
+    padding: 16px 0;
+    width: 100%;
+    text-align: center;
+    border-bottom: 0.5px solid var(--line);
+    transition: color 0.2s;
+  }
+  .mobile-nav-inner a:first-child { border-top: 0.5px solid var(--line); }
+  .mobile-nav-inner a:hover { color: var(--gold-deep); }
+  .mobile-nav-inner a.active {
+    color: var(--gold-deep);
+    font-style: italic;
+  }
+  .mobile-nav-footer {
+    position: absolute;
+    bottom: 36px;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  /* ═══════════ MOBILE STICKY CTA ═══════════ */
+  .mobile-cta {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 24px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    background: rgba(250, 246, 238, 0.95);
+    border-top: 0.5px solid var(--line);
+    z-index: 30;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .mobile-cta-btn {
+    display: block;
+    width: 100%;
+    padding: 17px;
+    background: var(--ink);
+    border: none;
+    color: var(--bone);
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .mobile-cta-btn:active { background: var(--gold-deep); }
+
+  /* ═══════════ RESPONSIVE — 920px ═══════════ */
+  @media (max-width: 920px) {
+    .nav-toggle { display: flex; }
+    nav { display: none; }
+    header { padding: 16px 24px; z-index: 50; }
+
+    .hero { padding: 40px 24px 20px; }
+    .hero .lede { font-size: 15px; }
+
+    .routes {
+      grid-template-columns: 1fr;
+      padding: 0 24px;
+      gap: 10px;
+      margin-top: 28px;
+    }
+    .route-card { padding: 20px 18px; }
+    .route-num { font-size: 28px; margin-bottom: 8px; }
+    .route-card h3 { font-size: 17px; }
+
+    .studio {
+      grid-template-columns: 1fr;
+      padding: 0 24px 100px;
+      gap: 28px;
+      margin-top: 36px;
+    }
+    .stage {
+      position: relative;
+      top: 0;
+      min-height: auto;
+      padding: 48px 20px 24px;
+    }
+    #boxPreview { max-width: 100%; }
+    .stage-caption { margin-top: 16px; font-size: 12px; }
+
+    .controls { padding-top: 0; }
+    .step { margin-bottom: 24px; padding-bottom: 24px; }
+    .step-title { font-size: 19px; }
+
+    .summary .summary-actions { display: none; }
+    .mobile-cta { display: block; }
+  }
+
+  /* ═══════════ RESPONSIVE — 480px ═══════════ */
+  @media (max-width: 480px) {
+    .swatches { gap: 8px; }
+    .swatch-name { font-size: 10px; letter-spacing: 0.03em; }
+    .qty-tiers { grid-template-columns: repeat(2, 1fr); }
+    .summary { padding: 36px 20px 40px; }
+    .summary h2 { font-size: 26px; }
+    .step-hint { font-size: 12px; }
+    .type-styles { gap: 6px; }
+  }
+  /* ═══════════ FORM VALIDATION ═══════════ */
+  .field-error {
+    display: block;
+    font-size: 11px;
+    color: #B84040;
+    letter-spacing: 0.04em;
+    margin-top: 8px;
+    line-height: 1.4;
+  }
+  .field.has-error input[type="text"],
+  .field.has-error select { border-bottom-color: #B84040; }
+  .field.has-error .field-label { color: #B84040; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%       { transform: translateX(-6px); }
+    40%       { transform: translateX(6px); }
+    60%       { transform: translateX(-4px); }
+    80%       { transform: translateX(4px); }
+  }
+  .shake { animation: shake 0.42s ease; }
+
+  /* ═══════════ QUOTE MODAL ═══════════ */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(42, 31, 24, 0.55);
+    z-index: 200;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .modal {
+    background: var(--ink);
+    color: var(--bone);
+    width: 100%;
+    max-width: 560px;
+    max-height: 92vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+    padding: 56px 44px 48px;
+    transform: translateY(48px);
+    transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal::before {
+    content: '';
+    position: absolute;
+    inset: 14px;
+    border: 0.5px solid var(--gold);
+    pointer-events: none;
+  }
+  .modal-close {
+    position: absolute;
+    top: 22px;
+    right: 22px;
+    background: none;
+    border: none;
+    color: rgba(245, 239, 230, 0.45);
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s;
+    z-index: 2;
+  }
+  .modal-close:hover { color: var(--bone); }
+  .modal-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+  .modal-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(28px, 5vw, 38px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+  }
+  .modal-lede {
+    font-size: 14px;
+    color: rgba(245, 239, 230, 0.65);
+    line-height: 1.65;
+    margin-bottom: 28px;
+    padding-bottom: 28px;
+    border-bottom: 0.5px solid rgba(245, 239, 230, 0.15);
+  }
+  .modal-summary {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 28px;
+  }
+  .modal-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 0.5px solid rgba(245, 239, 230, 0.1);
+    gap: 16px;
+  }
+  .modal-row:last-child { border: none; }
+  .modal-row-key {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(245, 239, 230, 0.45);
+    flex-shrink: 0;
+  }
+  .modal-row-val { font-size: 13px; font-weight: 500; text-align: right; }
+  .modal-footer {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    text-align: center;
+    padding-top: 24px;
+    border-top: 0.5px solid rgba(245, 239, 230, 0.1);
+  }
+  @media (min-width: 921px) {
+    .modal-overlay { align-items: center; }
+    .modal { max-height: 82vh; border-radius: 2px; }
+  }
+
+  /* ═══════════ BUTTON LOADING STATE ═══════════ */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .btn-spinner {
+    display: inline-block;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    border: 1.5px solid transparent;
+    border-top-color: currentColor;
+    animation: spin 0.65s linear infinite;
+    flex-shrink: 0;
+  }
+  .btn-primary.loading,
+  .mobile-cta-btn.loading {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    opacity: 0.7;
+    pointer-events: none;
+    cursor: default;
+  }
+  /* Tint the transparent arc to match each button's background */
+  .btn-primary .btn-spinner {
+    border-color: rgba(42, 31, 24, 0.2);
+    border-top-color: var(--ink);
+  }
+  .mobile-cta-btn .btn-spinner {
+    border-color: rgba(245, 239, 230, 0.2);
+    border-top-color: var(--bone);
+  }
+
+  /* ═══════════ API ERROR TOAST ═══════════ */
+  .api-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(12px);
+    width: calc(100% - 48px);
+    max-width: 420px;
+    background: var(--ink);
+    border: 0.5px solid #B84040;
+    color: var(--bone);
+    padding: 14px 44px 14px 18px;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    z-index: 150;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+  }
+  .api-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: all;
+  }
+  .api-toast-msg { color: rgba(245, 239, 230, 0.85); }
+  .api-toast-close {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: rgba(245, 239, 230, 0.45);
+    cursor: pointer;
+    font-size: 13px;
+    transition: color 0.2s;
+    padding: 4px;
+  }
+  .api-toast-close:hover { color: var(--bone); }
+  @media (max-width: 920px) {
+    .api-toast { bottom: 88px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">BASILEI</div>
+  <nav>
+    <a href="#">Shop</a>
+    <a href="#">Collection</a>
+    <a href="#" class="active">Design Your Own</a>
+    <a href="#">Story</a>
+    <a href="#">Contact</a>
+  </nav>
+  <button class="nav-toggle" id="navToggle" aria-label="Open navigation" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+</header>
+
+<!-- MOBILE NAV OVERLAY -->
+<div class="mobile-nav" id="mobileNav" aria-hidden="true">
+  <div class="mobile-nav-wordmark">BASILEI</div>
+  <nav class="mobile-nav-inner">
+    <a href="#">Shop</a>
+    <a href="#">Collection</a>
+    <a href="#" class="active">Design Your Own</a>
+    <a href="#">Story</a>
+    <a href="#">Contact</a>
+  </nav>
+  <div class="mobile-nav-footer">— Handcrafted in Stellenbosch —</div>
+</div>
+
+<section class="hero">
+  <div class="eyebrow">Bespoke &amp; White-Label</div>
+  <h1 class="title">This is your <em>canvas</em>.</h1>
+  <p class="lede">Handcrafted confectionery, dressed in your colours. Design a one-of-a-kind Basilei box for your brand, your wedding, your moment — and we'll make it real in our Stellenbosch atelier.</p>
+</section>
+
+<section class="routes">
+  <div class="route-card active" data-route="canvas">
+    <div class="route-num">i.</div>
+    <h3>The Canvas</h3>
+    <p>Start from our signature box and personalise the central panel with your logo, message, and accent colour. Perfect for first-timers.</p>
+  </div>
+  <div class="route-card" data-route="atelier">
+    <div class="route-num">ii.</div>
+    <h3>Atelier Edition</h3>
+    <p>A fully custom box — your colourway, your typography, your mark. The same route taken by Blaauwklippen 1682.</p>
+  </div>
+  <div class="route-card" data-route="upload">
+    <div class="route-num">iii.</div>
+    <h3>Designer Upload</h3>
+    <p>Have your studio prepared the artwork? Download our dieline pack and upload print-ready files for production.</p>
+  </div>
+</section>
+
+<section class="studio">
+
+  <!-- LEFT: PREVIEW -->
+  <div class="stage">
+    <div class="stage-label">Live preview</div>
+    <div class="stage-actions">
+      <button class="icon-btn" id="rotateBtn" title="Rotate view">↺</button>
+      <button class="icon-btn" id="downloadBtn" title="Save preview">↓</button>
+    </div>
+
+    <svg id="boxPreview" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+      <!-- Defs and gradients are injected by render() -->
+    </svg>
+
+    <div class="stage-caption">— handcrafted confectionery since 2016 —</div>
+  </div>
+
+  <!-- RIGHT: CONTROLS -->
+  <div class="controls">
+
+    <!-- STEP 1: BOX COLOUR -->
+    <div class="step">
+      <div class="step-header">
+        <span class="step-num">01.</span>
+        <span class="step-title serif">Choose your colourway</span>
+      </div>
+      <p class="step-hint">Eight shades from the Basilei palette. Each one is foil-stamped with our signature gold border.</p>
+      <div class="swatches" id="swatches"></div>
+    </div>
+
+    <!-- STEP 2: BRANDING -->
+    <div class="step">
+      <div class="step-header">
+        <span class="step-num">02.</span>
+        <span class="step-title serif">Your mark on the canvas</span>
+      </div>
+      <p class="step-hint">The wraparound belly band carries your branding. Upload a logo or set it in our house typography.</p>
+
+      <div class="field">
+        <label class="field-label">Brand or recipient name</label>
+        <input type="text" id="brandName" maxlength="22" placeholder="Your brand name" value="Your brand">
+        <span class="field-error" id="brandError"></span>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Tagline or message</label>
+        <input type="text" id="tagline" maxlength="40" placeholder="A short line beneath the name" value="Crafted for you">
+      </div>
+
+      <div class="field">
+        <label class="field-label">Display style</label>
+        <div class="type-styles" id="typeStyles">
+          <div class="type-style active" data-style="serif">
+            <div class="type-style-name serif" style="font-weight:500">Aa</div>
+            <div class="type-style-label">Serif</div>
+          </div>
+          <div class="type-style" data-style="sans">
+            <div class="type-style-name" style="font-weight:500;letter-spacing:0.1em">AA</div>
+            <div class="type-style-label">Modern</div>
+          </div>
+          <div class="type-style" data-style="italic">
+            <div class="type-style-name serif" style="font-style:italic">Aa</div>
+            <div class="type-style-label">Italic</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Logo (optional)</label>
+        <label class="upload">
+          <input type="file" id="logoUpload" accept="image/*">
+          <div class="upload-icon">⬆</div>
+          <div class="upload-text"><strong>Upload your logo</strong> &middot; SVG or PNG, transparent background</div>
+        </label>
+      </div>
+    </div>
+
+    <!-- STEP 3: FLAVOUR -->
+    <div class="step">
+      <div class="step-header">
+        <span class="step-num">03.</span>
+        <span class="step-title serif">Pick your fudge</span>
+      </div>
+      <p class="step-hint">The corner sticker on each box names the flavour inside. Mix and match across an order.</p>
+
+      <div class="field">
+        <label class="field-label">Flavour</label>
+        <select id="flavour">
+          <option>Macadamia &amp; Honey Nougat</option>
+          <option>Salted Caramel Fudge</option>
+          <option>Earl Grey &amp; Honey Shortbread Fudge</option>
+          <option>Pistachio &amp; Quince Nougat</option>
+          <option>Salted Roasted Peanut Caramel</option>
+          <option>Dark Chocolate &amp; Sea Salt</option>
+          <option>Custom flavour — tell us</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- STEP 4: QUANTITY -->
+    <div class="step">
+      <div class="step-header">
+        <span class="step-num">04.</span>
+        <span class="step-title serif">How many boxes?</span>
+      </div>
+      <p class="step-hint">Minimum order is 12. Pricing scales with volume — choose a tier or enter an exact quantity.</p>
+
+      <div class="qty-tiers" id="qtyTiers">
+        <div class="qty-tier active" data-qty="24"><div class="qty-tier-num">24</div><div class="qty-tier-label">Gift</div></div>
+        <div class="qty-tier" data-qty="50"><div class="qty-tier-num">50</div><div class="qty-tier-label">Event</div></div>
+        <div class="qty-tier" data-qty="100"><div class="qty-tier-num">100</div><div class="qty-tier-label">Corporate</div></div>
+        <div class="qty-tier" data-qty="250"><div class="qty-tier-num">250+</div><div class="qty-tier-label">Bulk</div></div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Custom quantity</label>
+        <input type="text" id="qtyInput" inputmode="numeric" value="24">
+        <span class="field-error" id="qtyError"></span>
+      </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="summary">
+      <div class="summary-eyebrow">Your order</div>
+      <h2 class="serif">A bespoke Basilei.</h2>
+      <div class="summary-rows" id="summaryRows"></div>
+      <div class="summary-actions">
+        <button class="btn">Save design</button>
+        <button class="btn btn-primary">Request quote →</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  // ═══════════════════════════════════════
+  //  STATE
+  // ═══════════════════════════════════════
+  const PALETTE = [
+    { id: 'rose',       name: 'Rose',        fill: '#E8B4C8', accent: '#993556' },
+    { id: 'mustard',    name: 'Mustard',     fill: '#D4A24C', accent: '#854F0B' },
+    { id: 'powder',     name: 'Powder',      fill: '#BFD3DB', accent: '#0C447C' },
+    { id: 'lavender',   name: 'Lavender',    fill: '#C8B8D6', accent: '#3C3489' },
+    { id: 'terracotta', name: 'Terracotta',  fill: '#C77B5C', accent: '#4A1B0C' },
+    { id: 'cream',      name: 'Cream',       fill: '#F0E6D6', accent: '#4A3A2E' },
+    { id: 'sage',       name: 'Sage',        fill: '#A8B89A', accent: '#27500A' },
+    { id: 'charcoal',   name: 'Charcoal',    fill: '#3C3530', accent: '#D4A24C' }
+  ];
+
+  const state = {
+    route: 'canvas',
+    color: PALETTE[0],
+    brandName: 'Your brand',
+    tagline: 'Crafted for you',
+    typeStyle: 'serif',
+    logoData: null,
+    flavour: 'Macadamia & Honey Nougat',
+    quantity: 24,
+    rotation: 0
+  };
+
+  // ═══════════════════════════════════════
+  //  RENDER: SVG BOX
+  // ═══════════════════════════════════════
+  function render() {
+    const svg = document.getElementById('boxPreview');
+    const c = state.color;
+
+    // Lighten/darken helpers for face shading
+    const shade = (hex, amt) => {
+      const n = parseInt(hex.slice(1), 16);
+      const r = Math.max(0, Math.min(255, ((n >> 16) & 255) + amt));
+      const g = Math.max(0, Math.min(255, ((n >> 8) & 255) + amt));
+      const b = Math.max(0, Math.min(255, (n & 255) + amt));
+      return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+    };
+
+    const top = shade(c.fill, 20);
+    const front = c.fill;
+    const side = shade(c.fill, -28);
+
+    const fontFamily = state.typeStyle === 'sans'
+      ? "'Outfit', sans-serif"
+      : "'Fraunces', serif";
+    const fontStyle = state.typeStyle === 'italic' ? 'italic' : 'normal';
+    const fontWeight = state.typeStyle === 'sans' ? 500 : 400;
+
+    // Belly band visibility (only for "canvas" route)
+    const showBand = state.route === 'canvas';
+    const bandColor = '#FAF6EE';
+    const bandTextColor = '#4A3A2E';
+
+    // Logo embedded
+    const logoMarkup = state.logoData
+      ? `<image x="240" y="155" width="120" height="50" href="${state.logoData}" preserveAspectRatio="xMidYMid meet"/>`
+      : '';
+
+    svg.innerHTML = `
+      <defs>
+        <clipPath id="windowClip">
+          <rect x="380" y="180" width="80" height="44" rx="2"/>
+        </clipPath>
+      </defs>
+
+      <!-- TOP FACE (parallelogram) -->
+      <polygon points="80,140 480,100 560,140 160,180" fill="${top}" stroke="${c.accent}" stroke-width="0.5" stroke-opacity="0.3"/>
+
+      <!-- TOP: BASILEI text -->
+      <text x="320" y="148" text-anchor="middle"
+            font-family="'Fraunces', serif" font-weight="500" font-size="22"
+            fill="${c.accent}" letter-spacing="6"
+            transform="rotate(-6 320 148)">BASILEI</text>
+      <text x="320" y="165" text-anchor="middle"
+            font-family="'Outfit', sans-serif" font-weight="400" font-size="7"
+            fill="${c.accent}" letter-spacing="3" opacity="0.75"
+            transform="rotate(-6 320 165)">— HANDCRAFTED CONFECTIONERY —</text>
+
+      <!-- FRONT FACE -->
+      <polygon points="80,140 160,180 160,340 80,300" fill="${side}"/>
+
+      <!-- FRONT face content (side panel with monogram + flavour label) -->
+      <g>
+        <!-- Flavour sticker -->
+        <rect x="92" y="158" width="58" height="40" fill="#FAF6EE" stroke="${c.accent}" stroke-width="0.4"/>
+        <text x="121" y="172" text-anchor="middle" font-family="'Outfit', sans-serif" font-size="5" font-weight="500" fill="${c.accent}" letter-spacing="0.5">${flavourLines(state.flavour)[0]}</text>
+        <text x="121" y="180" text-anchor="middle" font-family="'Outfit', sans-serif" font-size="5" font-weight="500" fill="${c.accent}" letter-spacing="0.5">${flavourLines(state.flavour)[1] || ''}</text>
+        <text x="121" y="188" text-anchor="middle" font-family="'Outfit', sans-serif" font-size="5" font-weight="500" fill="${c.accent}" letter-spacing="0.5">${flavourLines(state.flavour)[2] || ''}</text>
+      </g>
+
+      <!-- LONG FRONT FACE -->
+      <polygon points="160,180 560,140 560,300 160,340" fill="${front}"/>
+
+      <!-- Gold ornamental frame on front face -->
+      <path d="M 180,200 L 540,164 L 540,290 L 180,322 Z"
+            fill="none" stroke="${c.accent}" stroke-width="0.8" opacity="0.55"/>
+      <path d="M 188,206 L 532,172 L 532,282 L 188,314 Z"
+            fill="none" stroke="${c.accent}" stroke-width="0.4" opacity="0.4"/>
+      <!-- Decorative corner notches -->
+      ${cornerOrnaments(c.accent)}
+
+      <!-- B monogram circle (left side of front) -->
+      <g transform="translate(206, 268)">
+        <circle r="14" fill="none" stroke="${c.accent}" stroke-width="0.5" opacity="0.6"/>
+        <circle r="11" fill="none" stroke="${c.accent}" stroke-width="0.3" opacity="0.4"/>
+        <text x="0" y="4" text-anchor="middle" font-family="'Fraunces', serif" font-weight="500" font-style="italic" font-size="14" fill="${c.accent}" opacity="0.8">B</text>
+      </g>
+
+      <!-- BELLY BAND (Canvas route only) -->
+      ${showBand ? `
+        <polygon points="240,170 480,148 480,310 240,332" fill="${bandColor}" opacity="0.97"/>
+
+        <!-- Logo if uploaded -->
+        ${logoMarkup}
+
+        <!-- Brand name -->
+        <text x="360" y="${state.logoData ? 230 : 235}" text-anchor="middle"
+              font-family="${fontFamily}" font-weight="${fontWeight}" font-style="${fontStyle}"
+              font-size="18" fill="${bandTextColor}" letter-spacing="${state.typeStyle === 'sans' ? '2' : '1'}">
+          ${escapeXml(state.brandName.toUpperCase())}
+        </text>
+
+        <!-- Tagline -->
+        <text x="360" y="${state.logoData ? 248 : 254}" text-anchor="middle"
+              font-family="'Outfit', sans-serif" font-weight="300" font-size="7"
+              fill="${bandTextColor}" opacity="0.7" letter-spacing="2">
+          — ${escapeXml(state.tagline.toUpperCase())} —
+        </text>
+
+        <!-- Decorative line -->
+        <line x1="320" y1="265" x2="400" y2="259" stroke="${c.accent}" stroke-width="0.4" opacity="0.5"/>
+      ` : `
+        <!-- Atelier route: full custom branding on the box itself -->
+        <text x="360" y="${state.logoData ? 250 : 245}" text-anchor="middle"
+              font-family="${fontFamily}" font-weight="${fontWeight}" font-style="${fontStyle}"
+              font-size="20" fill="${c.accent}" letter-spacing="${state.typeStyle === 'sans' ? '3' : '1.5'}">
+          ${escapeXml(state.brandName.toUpperCase())}
+        </text>
+        <text x="360" y="${state.logoData ? 268 : 263}" text-anchor="middle"
+              font-family="'Outfit', sans-serif" font-weight="300" font-size="7"
+              fill="${c.accent}" opacity="0.75" letter-spacing="2">
+          — ${escapeXml(state.tagline.toUpperCase())} —
+        </text>
+        ${logoMarkup}
+      `}
+
+      <!-- Subtle floor shadow -->
+      <ellipse cx="320" cy="365" rx="200" ry="8" fill="#2A1F18" opacity="0.06"/>
+    `;
+  }
+
+  function cornerOrnaments(color) {
+    return `
+      <g stroke="${color}" stroke-width="0.5" fill="none" opacity="0.65">
+        <path d="M 195,210 q 5,-2 10,4"/>
+        <path d="M 525,170 q -5,2 -10,-4"/>
+        <path d="M 195,310 q 5,2 10,-4"/>
+        <path d="M 525,280 q -5,-2 -10,4"/>
+      </g>
+    `;
+  }
+
+  function flavourLines(flavour) {
+    return flavour.toUpperCase().replace(/&/g, '&amp;').split(/\s+/).reduce((acc, w) => {
+      const last = acc[acc.length - 1];
+      if (last && (last + ' ' + w).length < 14) acc[acc.length - 1] = last + ' ' + w;
+      else acc.push(w);
+      return acc;
+    }, []).slice(0, 3);
+  }
+
+  function escapeXml(s) {
+    return String(s).replace(/[<>&'"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;',"'":'&apos;','"':'&quot;'}[c]));
+  }
+
+  // ═══════════════════════════════════════
+  //  RENDER: SUMMARY
+  // ═══════════════════════════════════════
+  function renderSummary() {
+    const rows = [
+      ['Route', state.route === 'canvas' ? 'The Canvas' : state.route === 'atelier' ? 'Atelier Edition' : 'Designer Upload'],
+      ['Colourway', state.color.name],
+      ['Branding', state.brandName],
+      ['Flavour', state.flavour],
+      ['Quantity', state.quantity + ' boxes'],
+      ['Lead time', '14 working days from artwork sign-off']
+    ];
+    document.getElementById('summaryRows').innerHTML = rows.map(([k, v]) =>
+      `<div class="summary-row"><span>${k}</span><span>${escapeXml(v)}</span></div>`
+    ).join('');
+  }
+
+  // ═══════════════════════════════════════
+  //  BUILD UI
+  // ═══════════════════════════════════════
+  function buildSwatches() {
+    const html = PALETTE.map((p, i) => `
+      <div class="swatch ${i === 0 ? 'active' : ''}" data-color="${p.id}">
+        <div class="swatch-color" style="background:${p.fill}"></div>
+        <div class="swatch-name">${p.name}</div>
+      </div>
+    `).join('');
+    document.getElementById('swatches').innerHTML = html;
+
+    document.querySelectorAll('.swatch').forEach(el => {
+      el.addEventListener('click', () => {
+        document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+        el.classList.add('active');
+        state.color = PALETTE.find(p => p.id === el.dataset.color);
+        render(); renderSummary();
+      });
+    });
+  }
+
+  // ═══════════════════════════════════════
+  //  EVENT WIRING
+  // ═══════════════════════════════════════
+  function wireUp() {
+    // Routes
+    document.querySelectorAll('.route-card').forEach(el => {
+      el.addEventListener('click', () => {
+        document.querySelectorAll('.route-card').forEach(r => r.classList.remove('active'));
+        el.classList.add('active');
+        state.route = el.dataset.route;
+        render(); renderSummary();
+      });
+    });
+
+    // Inputs
+    document.getElementById('brandName').addEventListener('input', e => {
+      state.brandName = e.target.value || 'Your brand';
+      render(); renderSummary();
+    });
+    document.getElementById('tagline').addEventListener('input', e => {
+      state.tagline = e.target.value || 'Crafted for you';
+      render();
+    });
+
+    // Type styles
+    document.querySelectorAll('.type-style').forEach(el => {
+      el.addEventListener('click', () => {
+        document.querySelectorAll('.type-style').forEach(s => s.classList.remove('active'));
+        el.classList.add('active');
+        state.typeStyle = el.dataset.style;
+        render();
+      });
+    });
+
+    // Logo upload
+    document.getElementById('logoUpload').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        state.logoData = ev.target.result;
+        render();
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Flavour
+    document.getElementById('flavour').addEventListener('change', e => {
+      state.flavour = e.target.value;
+      render(); renderSummary();
+    });
+
+    // Quantity tiers
+    document.querySelectorAll('.qty-tier').forEach(el => {
+      el.addEventListener('click', () => {
+        document.querySelectorAll('.qty-tier').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        state.quantity = parseInt(el.dataset.qty);
+        document.getElementById('qtyInput').value = state.quantity;
+        renderSummary();
+      });
+    });
+    document.getElementById('qtyInput').addEventListener('input', e => {
+      const n = parseInt(e.target.value) || 0;
+      state.quantity = n;
+      document.querySelectorAll('.qty-tier').forEach(t => t.classList.remove('active'));
+      renderSummary();
+    });
+
+    // Rotation toggle
+    document.getElementById('rotateBtn').addEventListener('click', () => {
+      const svg = document.getElementById('boxPreview');
+      state.rotation = (state.rotation + 1) % 2;
+      svg.style.transform = state.rotation ? 'scaleX(-1)' : 'scaleX(1)';
+      svg.style.transition = 'transform 0.5s ease';
+    });
+
+    // Download stub
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      alert('In production this would export your design as a high-res PDF for proofing.');
+    });
+  }
+
+  // ═══════════════════════════════════════
+  //  INIT
+  // ═══════════════════════════════════════
+  buildSwatches();
+  wireUp();
+  render();
+  renderSummary();
+
+  // ═══════════════════════════════════════
+  //  MOBILE NAV
+  // ═══════════════════════════════════════
+  const navToggle = document.getElementById('navToggle');
+  const mobileNav = document.getElementById('mobileNav');
+
+  function openNav() {
+    mobileNav.classList.add('open');
+    navToggle.classList.add('open');
+    navToggle.setAttribute('aria-expanded', 'true');
+    mobileNav.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeNav() {
+    mobileNav.classList.remove('open');
+    navToggle.classList.remove('open');
+    navToggle.setAttribute('aria-expanded', 'false');
+    mobileNav.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  navToggle.addEventListener('click', () => {
+    mobileNav.classList.contains('open') ? closeNav() : openNav();
+  });
+
+  document.querySelectorAll('#mobileNav a').forEach(a => {
+    a.addEventListener('click', closeNav);
+  });
+
+  // ═══════════════════════════════════════
+  //  FORM VALIDATION & QUOTE SUBMISSION
+  // ═══════════════════════════════════════
+  const ROUTE_LABELS = { canvas: 'The Canvas', atelier: 'Atelier Edition', upload: 'Designer Upload' };
+
+  function validate() {
+    const errors = {};
+    if (!state.brandName.trim()) {
+      errors.brandName = 'Please enter a brand or recipient name.';
+    }
+    if (!state.quantity || isNaN(state.quantity) || state.quantity < 12) {
+      errors.quantity = (state.quantity > 0 && state.quantity < 12)
+        ? `Minimum order is 12 boxes — you entered ${state.quantity}.`
+        : 'Please enter a valid quantity (minimum 12).';
+    }
+    return errors;
+  }
+
+  function showFieldErrors(errors) {
+    clearFieldErrors();
+    if (errors.brandName) {
+      const field = document.getElementById('brandName').closest('.field');
+      field.classList.add('has-error', 'shake');
+      document.getElementById('brandError').textContent = errors.brandName;
+      setTimeout(() => field.classList.remove('shake'), 450);
+    }
+    if (errors.quantity) {
+      const field = document.getElementById('qtyInput').closest('.field');
+      field.classList.add('has-error', 'shake');
+      document.getElementById('qtyError').textContent = errors.quantity;
+      setTimeout(() => field.classList.remove('shake'), 450);
+    }
+  }
+
+  function clearFieldErrors() {
+    document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+    document.querySelectorAll('.field.has-error').forEach(el => el.classList.remove('has-error'));
+  }
+
+  // ─── Mock API ─────────────────────────────────────
+  // opts are for testability only; defaults reproduce production behaviour.
+  function mockApiSubmit(payload, { _random = Math.random, _delay = null } = {}) {
+    console.log('[Basilei] Submitting order:', payload);
+    const ms = _delay !== null ? _delay : 1500 + _random() * 900; // 1.5 – 2.4 s
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (_random() < 0.12) {                                    // ~12% failure rate
+          reject(new Error('Network error — please check your connection and try again.'));
+          return;
+        }
+        const orderId      = 'BSL-' + _random().toString(36).slice(2, 8).toUpperCase();
+        const ready        = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+        const estimatedDate = ready.toLocaleDateString('en-ZA', { day: 'numeric', month: 'long', year: 'numeric' });
+        resolve({ orderId, estimatedDate });
+      }, ms);
+    });
+  }
+
+  // ─── Button loading state ───────────────────────
+  function setButtonsLoading(isLoading) {
+    [document.querySelector('.btn-primary'), document.querySelector('.mobile-cta-btn')]
+      .filter(Boolean)
+      .forEach(btn => {
+        btn.disabled = isLoading;
+        btn.classList.toggle('loading', isLoading);
+        btn.innerHTML = isLoading
+          ? '<span class="btn-spinner"></span>Sending…'
+          : 'Request quote &rarr;';
+      });
+  }
+
+  // ─── Error toast ──────────────────────────────
+  let _toastTimer = null;
+  function showApiToast(msg) {
+    document.getElementById('apiToastMsg').textContent = msg;
+    document.getElementById('apiToast').classList.add('show');
+    clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(hideApiToast, 5500);
+  }
+  function hideApiToast() {
+    document.getElementById('apiToast').classList.remove('show');
+  }
+  document.getElementById('apiToastClose').addEventListener('click', hideApiToast);
+
+  // ─── Quote modal ──────────────────────────────
+  function openQuoteModal(apiResponse) {
+    const overlay = document.getElementById('modalOverlay');
+    const rows = [
+      ['Order ref',  apiResponse.orderId],
+      ['Route',      ROUTE_LABELS[state.route]],
+      ['Colourway',  state.color.name],
+      ['Branding',   state.brandName],
+      ['Flavour',    state.flavour],
+      ['Quantity',   state.quantity + ' boxes'],
+      ['Ready by',   apiResponse.estimatedDate]
+    ];
+    document.getElementById('modalSummary').innerHTML = rows.map(([k, v]) =>
+      `<div class="modal-row"><span class="modal-row-key">${k}</span><span class="modal-row-val">${escapeXml(String(v))}</span></div>`
+    ).join('');
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('modalClose').focus(), 50);
+  }
+
+  function closeQuoteModal() {
+    const overlay = document.getElementById('modalOverlay');
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden', 'true');
+    if (!mobileNav.classList.contains('open')) document.body.style.overflow = '';
+  }
+
+  // ─── Submit handler (async) ──────────────────────
+  async function handleQuoteRequest() {
+    const errors = validate();
+    if (Object.keys(errors).length > 0) {
+      showFieldErrors(errors);
+      const firstError = document.querySelector('.field.has-error');
+      if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    clearFieldErrors();
+    setButtonsLoading(true);
+    try {
+      const result = await mockApiSubmit({
+        route:     state.route,
+        colorId:   state.color.id,
+        brandName: state.brandName,
+        tagline:   state.tagline,
+        typeStyle: state.typeStyle,
+        flavour:   state.flavour,
+        quantity:  state.quantity
+      });
+      setButtonsLoading(false);
+      openQuoteModal(result);
+    } catch (err) {
+      setButtonsLoading(false);
+      showApiToast(err.message || 'Something went wrong — please try again.');
+    }
+  }
+
+  // Both quote buttons share the same handler
+  document.querySelector('.mobile-cta-btn').addEventListener('click', handleQuoteRequest);
+  document.querySelector('.btn-primary').addEventListener('click', handleQuoteRequest);
+
+  // Modal close
+  document.getElementById('modalClose').addEventListener('click', closeQuoteModal);
+  document.getElementById('modalOverlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeQuoteModal();
+  });
+
+  // Combined Escape key handler (modal takes priority over nav)
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if (document.getElementById('modalOverlay').classList.contains('open')) { closeQuoteModal(); return; }
+    if (mobileNav.classList.contains('open')) closeNav();
+  });
+
+  // Clear errors as the user corrects each field
+  document.getElementById('brandName').addEventListener('input', () => {
+    if (state.brandName.trim()) {
+      document.getElementById('brandName').closest('.field').classList.remove('has-error');
+      document.getElementById('brandError').textContent = '';
+    }
+  });
+  document.getElementById('qtyInput').addEventListener('input', () => {
+    if (state.quantity >= 12) {
+      document.getElementById('qtyInput').closest('.field').classList.remove('has-error');
+      document.getElementById('qtyError').textContent = '';
+    }
+  });
+</script>
+
+<!-- QUOTE MODAL -->
+<div class="modal-overlay" id="modalOverlay" aria-hidden="true">
+  <div class="modal" id="quoteModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+    <div class="modal-eyebrow">Design submitted</div>
+    <h2 class="modal-title serif" id="modalTitle">We’ll be in touch.</h2>
+    <p class="modal-lede">Our Stellenbosch team will review your design and send a tailored quote within one working day.</p>
+    <div class="modal-summary" id="modalSummary"></div>
+    <div class="modal-footer">— basilei.co.za · studio@basilei.co.za —</div>
+  </div>
+</div>
+
+<!-- MOBILE STICKY CTA -->
+<div class="mobile-cta" id="mobileCta">
+  <button class="mobile-cta-btn">Request quote →</button>
+</div>
+
+<!-- API ERROR TOAST -->
+<div class="api-toast" id="apiToast" role="alert" aria-live="assertive">
+  <span class="api-toast-msg" id="apiToastMsg"></span>
+  <button class="api-toast-close" id="apiToastClose" aria-label="Dismiss">✕</button>
+</div>
+
+</body>
+</html>
